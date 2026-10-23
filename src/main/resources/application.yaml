@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: hello-service
+
+server:
+  port: 8080
+  shutdown: graceful          # finish in-flight requests during rolling updates
+
+app:
+  version: ${APP_VERSION:dev} # set to the commit SHA by the Helm chart
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true          # /actuator/health/liveness and /actuator/health/readiness
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true   # histogram buckets, needed for p95/p99 latency in Prometheus
